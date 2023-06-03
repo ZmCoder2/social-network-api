@@ -46,6 +46,34 @@ const thoughtsSchema = new Schema(
 
 )
 
+const reactionsSchema = new Schema(
+    {
+        reactionId: {
+            type: mongoose.ObjectId,
+            newObjectId: ObjectId(""),
+        },
+        reactionBody: {
+            type: String,
+            required: true,
+            maxLength: 250,
+        },
+        username: {
+            type: String,
+            required: true,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now,
+            get: (date) => timeSince(date),
+        },
+        toJSON: {
+            getters: true, virtuals: true,
+            timestamps: true,
+        },
+        id: false,
+    }
+)
+
 // Step 2:
 // Schema settings
 // Create a virtual called reactionCount that retrieves the length of the thoughts reactions array field on query.
@@ -56,6 +84,6 @@ thoughtsSchema
         return this.reactions.length;
     });
 
-    const Thoughts = model('thoughts'. thoughtsSchema);
+const Thoughts = model('thoughts', thoughtsSchema, reactionsSchema);
 
-    module.exports = Thoughts;
+module.exports = Thoughts;
