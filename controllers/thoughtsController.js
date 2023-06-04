@@ -12,7 +12,7 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    async getSingleThought(res, res) {
+    async getSingleThought(req, res) {
         try {
             const thought = await Thoughts.findOne({ _id: req.params.postId })
             .populate({ path: 'tags', select: '-__v'});
