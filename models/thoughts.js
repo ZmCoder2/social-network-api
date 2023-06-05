@@ -1,89 +1,52 @@
 const { Schema, model } = require('mongoose');
 
-// Step 1:
-// thoughtText
-// String
-// Required
-// Must be between 1 and 280 characters
-const thoughtsSchema = new Schema(
-    {
-        thoughtText: {
-            type: String,
-            required: true,
-            minLength: 1,
-            maxLength: 280,
-        },
-        // CreatedAt
-        // Date
-        // Set default value to the current timestamp
-        // Use a getter method to format the timestamp on query
-        createdAt: {
-            type: Date,
-            default: Date.now,
-            get: (date) => timeSince(date),
-        },
-        // username (The user that created this thought)
-        // String
-        // Required
-        username: {
-            type: String,
-            required: true,
-        },
-        // reactions (Replies)
-        // Array of nested documents created with the reactionsSchema
-        reactions: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'reactions',
-            }
-        ],
-        toJSON: {
-            getters: true, virtuals: true,
-            timestamps: true,
-        },
-        id: false,
-    }
+// Define the reactions schema
+const reactionsSchema = new Schema({
+    reactionId: {
+        type: Schema.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId(),
+    },
+    reactionBody: {
+        type: String,
+        required: true,
+        maxLength: 250,
+    },
+    username: {
+        type: String,
+        required: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        get: (date) => timeSince(date),
+    },
+});
 
-)
+// Define the thoughts schema
+const thoughtsSchema = new Schema({
+    thoughtText: {
+        type: String,
+        required: true,
+        minLength: 1,
+        maxLength: 280,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        get: (date) => timeSince(date),
+    },
+    username: {
+        type: String,
+        required: true,
+    },
+    reactions: [reactionsSchema], // Embed the reactions schema as an array
+});
 
-const reactionsSchema = new Schema(
-    {
-        reactionId: {
-            type: mongoose.ObjectId,
-            newObjectId: ObjectId(""),
-        },
-        reactionBody: {
-            type: String,
-            required: true,
-            maxLength: 250,
-        },
-        username: {
-            type: String,
-            required: true,
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-            get: (date) => timeSince(date),
-        },
-        toJSON: {
-            getters: true, virtuals: true,
-            timestamps: true,
-        },
-        id: false,
-    }
-)
+thoughtsSchema.virtual('reactionCount').get(function () {
+    return this.reactions.length;
+});
 
-// Step 2:
-// Schema settings
-// Create a virtual called reactionCount that retrieves the length of the thoughts reactions array field on query.
+const Thoughts = model('Thoughts', thoughtsSchema);
+const Reactions = model('Reactions', reactionsSchema);
 
-thoughtsSchema
-    .virtual('reactionCount')
-    .get(function () {
-        return this.reactions.length;
-    });
-
-const Thoughts = model('thoughts', thoughtsSchema, reactionsSchema);
-
-module.exports = Thoughts;
+module.exports = { Thoughts, Reactions };

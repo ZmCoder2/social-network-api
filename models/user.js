@@ -1,40 +1,38 @@
 const { Schema, model } = require("mongoose");
 
-const usersSchema = new Schema(
-    {
-        username: {
-            type: String,
-            unique: true,
-            required: true,
-            trimmed: true,
+const userSchema = new Schema({
+    username: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/^[\w.+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email address!"],
+    },
+    thoughts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Thoughts"
         },
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            match: [/^[\w.+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please enter a valid email address!"],
-        },
-        thoughts: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Thoughts"
-            },
-        ],
-        friends: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Friends"
-            }
-        ]
-    }
-)
+    ],
+    friends: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Friends"
+        }
+    ]
+});
 
-usersSchema
-    .virtual('friendCount')
-    .get(function () {
-        return this.friends.length;
-    });
+userSchema.virtual('friendCount').get(function () {
+    return this.friends.length;
+});
 
-    const Users = model('users'.usersSchema);
+console.log("This is where the error is");
 
-    module.exports = Users;
+const User = model('User', userSchema);
+
+module.exports = User;
