@@ -1,4 +1,5 @@
-const { Thoughts, Users } = require('../models');
+// Maybe Users?
+const { Thoughts } = require('../models');
 
 module.exports = {
     // Gets all thoughts
@@ -95,8 +96,30 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-
     
+    // Create a reaction
+    async createReaction(req, res) {
+        try {
+            const reaction = await Thoughts.create(req.body);
+            res.json(reaction);
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json(err);
+        }
+    },
+
+    // Delete a reaction
+    async deleteReaction(req, res) {
+        try {
+            const reaction = await Thoughts.findOneAndDelete({ _id: req.params.reactionId });
+
+            if (!reaction) {
+                res.status(404).json({ message: 'No reaction with that ID' });
+            }
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 };
 
 // module.exports = thoughtsController;
