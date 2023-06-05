@@ -31,8 +31,6 @@ userSchema.virtual('friendCount').get(function () {
     return this.friends.length;
 });
 
-console.log("This is where the error is");
-
 const User = model('User', userSchema);
 
 module.exports = User;
