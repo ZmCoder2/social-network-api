@@ -61,9 +61,20 @@ module.exports = {
             res.status(500).json(err);
         }
     },
+   
     async addFriend(req, res) {
         try {
-            const userId = req.params
+          const userData = await User.findOneAndUpdate(req.friends);
+      
+          if (!userData) {
+            return res.status(404).json({ message: 'No user or friend with that ID' });
+          }
+      
+          return res.json(userData);
+        } catch (err) {
+          console.log(err);
+          return res.status(500).json(err);
         }
-    }
+      }
+          
 }
