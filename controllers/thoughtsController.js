@@ -17,7 +17,8 @@ module.exports = {
     // Get a single thought by its ID
     async getSingleThoughtById(req, res) {
         try {
-            const thought = await Thoughts.findOne({ _id: req.params.thoughtsId })
+            const thought = await Thoughts.findOne(
+                { _id: req.params.thoughtsId })
                 .populate({ path: 'reactions', select: '-__v' });
 
             if (!thought) {

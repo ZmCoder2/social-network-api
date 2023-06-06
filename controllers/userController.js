@@ -34,8 +34,8 @@ module.exports = {
         try {
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId},
-                { $set: req.id },
-                {runValidators: true, new: true}
+                { $set: req.body },
+                // {runValidators: true, new: true}
             );
 
             if (!user) {
@@ -64,12 +64,12 @@ module.exports = {
    
     async addFriend(req, res) {
         try {
+          
           const userData = await User.findOneAndUpdate(
             { _id: req.params.userId },
-            { $addToSet: { friends: req.body.ObjectId } },
-            // { runValidators: true, new: true }
+            { $addToSet: { friends: req.params.friendId } },
           );
-      
+          
           if (userData) {
             res.status(200).json(userData);
           } else {
@@ -81,5 +81,21 @@ module.exports = {
         }
       },
       
+      async deleteFriend(req, res) {
+        try {
+          const friend = await User.findOneAndUpdate(
+            { _id: req.params.userId},
+            {$pull: {friends: req.params.friendId} });
+      
+          if (!friend) {
+            res.status(404).json({ message: "Cannot delete friend" });
+          } else {
+            res.json({ message: "Friend removed" });
+          }
+        } catch (err) {
+          res.status(500).json(err);
+        }
+      }
+      
           
-}
+};
