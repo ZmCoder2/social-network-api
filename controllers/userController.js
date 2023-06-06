@@ -13,7 +13,7 @@ module.exports = {
         try {
             const user = await User.findOne({ _id: req.params.userId }).select('-__v');
 
-            if(!users) {
+            if(!user) {
                 return res.status(404).json({ message: 'No user with that ID' });
             }
 
@@ -61,4 +61,9 @@ module.exports = {
             res.status(500).json(err);
         }
     },
+    async addFriend(req, res) {
+        try {
+            const userId = req.params
+        }
+    }
 }

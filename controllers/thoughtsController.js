@@ -60,7 +60,7 @@ module.exports = {
     async updateThoughtById(req, res) {
         try {
             const thought = await Thoughts.findOneAndUpdate(
-                { _id: req.params.thoughtsId },
+                { _id: req.params.id },
                 { $set: req.body },
                 { runValidators: true, new: true }
             );

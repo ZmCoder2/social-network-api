@@ -2,11 +2,6 @@ const connection = require('../config/connection');
 
 const User = require('../models');
 
-// Import functions for seed data
-
-// Start the seeding runtime timer
-
-
 // Creates a connection to mongodb
 connection.once('open', async () => {
     console.log('connected')
@@ -14,7 +9,7 @@ connection.once('open', async () => {
     await User.deleteMany({});
     
 
-    // Empty arrays fpr randomly generated 
+    // Empty arrays for randomly generated 
     const users = [];
     
     for (let i = 0; i < 20; i++) {
