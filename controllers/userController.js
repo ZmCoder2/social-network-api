@@ -64,13 +64,13 @@ module.exports = {
    
     async addFriend(req, res) {
         try {
-          const userData = await User.findOneAndUpdate(req.friends);
-      
-          if (!userData) {
+          const friend = await User.create(req.body);
+            res.json(friend)
+          if (!friend) {
             return res.status(404).json({ message: 'No user or friend with that ID' });
           }
       
-          return res.json(userData);
+          return res.json(friend);
         } catch (err) {
           console.log(err);
           return res.status(500).json(err);
