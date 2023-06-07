@@ -23,8 +23,8 @@ const reactionsSchema = new Schema({
     toJSON: {
       getters: true
     },
-    id: false,
-    _id: false
+    // id: false,
+    // _id: false
 });
 
 module.exports = reactionsSchema;
