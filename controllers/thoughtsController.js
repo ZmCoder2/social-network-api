@@ -80,8 +80,8 @@ module.exports = {
     async createReaction(req, res) {
         try {
             const reaction = await Thoughts.findOneAndUpdate(
-                { _id:req.params.thoughtId },
-                { $addTooSet: {reactions: req.body }},
+                { _id:req.body.thoughtId },
+                { $addToSet: {reactions: req.body }},
                 { runValidators: true, new: true }
                 );
                 if (reaction) {
