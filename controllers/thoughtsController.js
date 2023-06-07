@@ -1,4 +1,4 @@
-const { Thoughts } = require('../models');
+const { Thoughts, Users } = require('../models');
 
 module.exports = {
     // Gets all thoughts
@@ -77,15 +77,36 @@ module.exports = {
     },
 
     // Create a reaction
-    async createReaction(req, res) {
+    async  createReaction(req, res) {
         try {
-            const reaction = await Thoughts.create(req.body);
-            res.json(reaction);
+          const { reactionBody, username } = req.body;
+      
+          if (!reactionBody || !username) {
+            return res.status(400).json({ error: 'Reaction body and username are required.' });
+          }
+      
+          const reaction = {
+            reactionId: new mongoose.Types.ObjectId(),
+            reactionBody,
+            username,
+            createdAt: new Date(),
+          };
+      
+          const thought = new Thoughts({
+            thoughtText: req.body.thoughtText,
+            username: req.body.username,
+            reactions: [reaction], // Pass the reaction as an array of embedded objects
+          });
+      
+          await thought.save();
+      
+          res.json(reaction);
         } catch (err) {
-            console.log(err);
-            return res.status(500).json(err);
+          console.log(err);
+          return res.status(500).json(err);
         }
-    },
+      },
+      
 
     // Delete a reaction
     async deleteReaction(req, res) {
