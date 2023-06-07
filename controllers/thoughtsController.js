@@ -1,4 +1,4 @@
-const { Thoughts, Users } = require('../models');
+const { Thoughts, Reactions } = require('../models');
 
 module.exports = {
     // Gets all thoughts
@@ -77,41 +77,28 @@ module.exports = {
     },
 
     // Create a reaction
-    async  createReaction(req, res) {
+    async createReaction(req, res) {
         try {
-          const { reactionBody, username } = req.body;
-      
-          if (!reactionBody || !username) {
-            return res.status(400).json({ error: 'Reaction body and username are required.' });
-          }
-      
-          const reaction = {
-            reactionId: new mongoose.Types.ObjectId(),
-            reactionBody,
-            username,
-            createdAt: new Date(),
-          };
-      
-          const thought = new Thoughts({
-            thoughtText: req.body.thoughtText,
-            username: req.body.username,
-            reactions: [reaction], // Pass the reaction as an array of embedded objects
-          });
-      
-          await thought.save();
-      
-          res.json(reaction);
-        } catch (err) {
-          console.log(err);
-          return res.status(500).json(err);
-        }
-      },
-      
+            const reaction = await Thoughts.findOneAndUpdate(
+                { _id:req.params.thoughtId },
+                { $addTooSet: {reactions: req.body }},
+                { runValidators: true, new: true }
+                );
+                if (reaction) {
+                    res.status(200).json(reaction);
+                  } else {
+                    res.status(404).json({ message: 'No reaction' });
+                  }
+                } catch (err) {
+                  console.log(err);
+                  res.status(500).json(err);
+                }
+    },
 
     // Delete a reaction
     async deleteReaction(req, res) {
         try {
-            const reaction = await Thoughts.findOneAndDelete({ _id: req.params.reactionId });
+            const reaction = await Reactions.findOneAndDelete({ _id: req.params.reactionId });
 
             if (!reaction) {
                 res.status(404).json({ message: 'No reaction with that ID' });
